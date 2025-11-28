@@ -3,9 +3,11 @@
 
 #include "ether_frame.h"
 #include "ip_header.h"
+#include "arp_header.h"
 #include <vector>
 #include <array>
 #include <string>
+#include <variant>
 #include <stdexcept>
 #include <pcap.h>
 #include <cstring>
@@ -19,7 +21,6 @@
 class PcapFacade
 {
 public:
-
     PcapFacade();
     ~PcapFacade();
 
@@ -33,9 +34,11 @@ public:
     std::string getIPv4() const;
     std::string getMask() const;
     std::vector<std::string> listAllDevices() const;
+    int maskToPrefix(std::string_view mask);
 
-    EtherFrame next_frame();
-    IpHeader next_packet();
+    std::pair<EtherFrame, const u_char*> next();
+    IpHeader parseIPV4(const u_char* payload);
+    ArpHeader parseARP(const u_char* payload);
 
 private:
     void extractIPv4Data();

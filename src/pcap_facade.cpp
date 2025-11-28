@@ -87,12 +87,12 @@ std::string PcapFacade::getMask() const { return mask; }
     return result;
 }
 
-EtherFrame PcapFacade::next_frame()
+std::pair<EtherFrame, const u_char*> PcapFacade::next()
 {
     pcap_pkthdr *hdr;
     const u_char *bytes;
 
-    int code = pcap_next_ex(handle, &hdr, &bytes);
+    pcap_next_ex(handle, &hdr, &bytes);
 
     struct ether_header* eptr;
     eptr = (struct ether_header*) bytes;
@@ -102,22 +102,23 @@ EtherFrame PcapFacade::next_frame()
     memcpy(frame.destination, eptr->ether_dhost, 6);
     frame.type = ntohs(eptr->ether_type);
 
-    return frame;
+    const u_char* payload = bytes + sizeof(ether_header);
+
+    return {frame, payload};
 }
 
-IpHeader PcapFacade::next_packet()
+IpHeader PcapFacade::parseIPV4(const u_char *payload)
 {
     IpHeader ip{};
-    pcap_pkthdr *hdr;
-    const u_char *bytes;
-
-    int code = pcap_next_ex(handle, &hdr, &bytes);
-
-    const u_char* ip_start = bytes + sizeof(struct ether_header);
-
-    std::memcpy(&ip, ip_start, sizeof(IpHeader));
-
+    std::memcpy(&ip, payload, sizeof(IpHeader));
     return ip;
+}
+
+ArpHeader PcapFacade::parseARP(const u_char *payload)
+{
+    ArpHeader arp{};
+    memcpy(&arp, payload, sizeof(ArpHeader));
+    return arp;
 }
 
 void PcapFacade::extractIPv4Data()
