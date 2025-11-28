@@ -34,7 +34,7 @@ public:
     std::string getIPv4() const;
     std::string getMask() const;
     std::vector<std::string> listAllDevices() const;
-    int maskToPrefix(std::string_view mask);
+    int maskToCIDR(const std::string& mask) const;
 
     std::pair<EtherFrame, const u_char*> next();
     IpHeader parseIPV4(const u_char* payload);

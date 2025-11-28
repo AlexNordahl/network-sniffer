@@ -87,6 +87,31 @@ std::string PcapFacade::getMask() const { return mask; }
     return result;
 }
 
+int PcapFacade::maskToCIDR(const std::string& mask) const
+{
+    std::string temp {mask};
+    temp.resize(15, '0');
+    temp += '.';
+    
+    int count = 0;
+    int ptr1 = 0;
+    int ptr2 = 4;
+    while (ptr2 < temp.length())
+    {
+        int octet = std::stoi(temp.substr(ptr1, ptr2));
+        ptr1 = ptr2;
+        ptr2 += 4;
+
+        while (octet) 
+        {
+            count += octet & 1;
+            octet >>= 1;
+        }
+    }
+
+    return count;
+}
+
 std::pair<EtherFrame, const u_char*> PcapFacade::next()
 {
     pcap_pkthdr *hdr;
