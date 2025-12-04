@@ -10,14 +10,14 @@ std::string toKeyword(const int decimal)
     {
     case 1: return "ICMP";
     case 2: return "IGMP";
-    case 3: return "GGP";
     case 4: return "IPV4";
-    case 5: return "ST";
     case 6: return "TCP";
-    case 7: return "CBT";
-    case 8: return "EGP";
-    case 9: return "IGP";
     case 17: return "UDP";
+    case 41: return "IPV6";
+    case 47: return "GRE";
+    case 50: return "ESP";
+    case 51: return "AH";
+    case 89: return "OSPF";
     default: return "?";
     }
 }
