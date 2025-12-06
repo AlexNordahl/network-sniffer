@@ -36,7 +36,7 @@ void printIPV4(const IpHeader& header)
     std::cout << "│ "
               << left << setw(10) << header.versionStr()
               << left << setw(10) << header.strIHL()
-              << left << setw(10) << "to add"
+              << left << setw(10) << "---"
               << left << setw(19) << header.totalLength()
               << " │\n";
 
@@ -133,6 +133,33 @@ void printUDP(const UdpHeader& header)
     std::cout << "│ "
               << left << setw(24) << header.length()
               << left << setw(25) << header.checksum()
+              << " │\n";
+
+    std::cout << "└───────────────────────────────────────────────────┘\n";
+}
+
+void printICMP(const IcmpHeader& header)
+{
+    std::cout << "│ "
+              << left << setw(20) << "TYPE"
+              << left << setw(20) << "CODE"
+              << left << setw(9) << "CHECKSUM"
+              << " │\n";
+
+    std::cout << "│ "
+              << left << setw(20) << header.getType()
+              << left << setw(20) << header.getCode()
+              << left << setw(9) << header.getChecksum()
+              << " │\n";
+
+    std::cout << "│ "
+              << left << setw(20) << "IDENTIFIER"
+              << left << setw(29) << "SEQUENCE"
+              << " │\n";
+
+    std::cout << "│ "
+              << left << setw(20) << header.getIdentifier()
+              << left << setw(29) << header.getSequence()
               << " │\n";
 
     std::cout << "└───────────────────────────────────────────────────┘\n";
