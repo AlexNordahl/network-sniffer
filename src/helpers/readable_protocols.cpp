@@ -40,10 +40,11 @@ std::string tcpFlags(const unsigned long long decimal, const std::string& separa
     return result;
 }
 
-std::string dnsFlags(const unsigned long long decimal, const std::string& separator)
+std::vector<std::string> dnsFlags(const unsigned long long decimal)
 {
     const std::bitset<16> bset {decimal};
-    std::string result {};
+    std::vector<std::string> result {};
+    result.reserve(10);
 
     const std::array<std::string, 7> opcode {
         "QUERY", "IQUERY", "STATUS", "",
@@ -55,22 +56,23 @@ std::string dnsFlags(const unsigned long long decimal, const std::string& separa
         "NXDOMAIN", "NOTIMP", "REFUSED"
     };
 
-    result += bset[15] == 0 ? "QUERY" : "RESP";
+    result.push_back(bset[15] == 0 ? "QUERY" : "RESP");
 
     const auto flags = static_cast<uint16_t>(decimal);
     const uint16_t opcodeVal = (flags >> 11) & 0xF;
-    result += separator + "OPCODE=" + opcode[opcodeVal];
+    result.push_back("OPCODE=" + opcode[opcodeVal]);
  
-    if (bset[10]) result += separator + "AA";
-    if (bset[9])  result += separator + "TC";
-    if (bset[8])  result += separator + "RD";
-    if (bset[7])  result += separator + "RA";
-    if (bset[6])  result += separator + "Z";
-    if (bset[5])  result += separator + "AD";
-    if (bset[4])  result += separator + "CD";
+    if (bset[10]) result.push_back("AA");
+    if (bset[9])  result.push_back("TC");
+    if (bset[8])  result.push_back("RD");
+    if (bset[7])  result.push_back("RA");
+    if (bset[6])  result.push_back("Z");
+    if (bset[5])  result.push_back("AD");
+    if (bset[4])  result.push_back("CD");
 
     const uint16_t rcodeVal = flags & 0xF;
-    result += separator + "RCODE=" + rcode[rcodeVal];
+    result.push_back("RCODE=" + rcode[rcodeVal]);
 
+    result.shrink_to_fit();
     return result;
 }
