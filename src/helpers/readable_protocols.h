@@ -8,7 +8,8 @@
 #include <arpa/inet.h>
 
 std::string protocolKeyword(const int decimal);
-std::string tcpFlags(const unsigned long long decimal, const std::string& separator);
+std::string arpOperation(const int decimal);
+std::vector<std::string> tcpFlags(const unsigned long long decimal);
 std::vector<std::string> dnsFlags(const unsigned long long decimal);
 
 #endif

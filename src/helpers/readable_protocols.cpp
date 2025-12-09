@@ -18,7 +18,21 @@ std::string protocolKeyword(const int decimal)
     }
 }
 
-std::string tcpFlags(const unsigned long long decimal, const std::string& separator)
+std::string arpOperation(const int decimal)
+{
+    switch (decimal)
+    {
+    case 1: return "REQUEST";
+    case 2: return "REPLY";
+    case 3: return "RA-REQ";
+    case 4: return "RA-REP";
+    case 8: return "IA-REQ";
+    case 9: return "IA-REP";
+    default: return "?";
+    }
+}
+
+std::vector<std::string> tcpFlags(const unsigned long long decimal)
 {
     const std::bitset<8> bset {decimal};
     const std::array<std::string, 8> flags {
@@ -26,15 +40,12 @@ std::string tcpFlags(const unsigned long long decimal, const std::string& separa
         "ACK", "URG", "ECE", "CWR"
     };
     
-    std::string result {};
+    std::vector<std::string> result {};
+    result.reserve(flags.size());
     for (size_t i = 0; i < 8; ++i)
     {
         if (bset[i])
-        {
-            if (!result.empty())
-                result += separator;
-            result += flags[i];
-        }
+            result.push_back(flags[i]);
     }
 
     return result;
