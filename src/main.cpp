@@ -1,5 +1,6 @@
 #include <iostream>
 #include <optional>
+#include <chrono>
 #include "pcap_facade/pcap_facade.h"
 #include "printer/console_printer.h"
 #include "printer/file_printer.h"
@@ -43,11 +44,11 @@ int main(int argc, char const* argv[])
     }
 
     std::cout << "Listening...\n";
-
+    
+    const ConsolePrinter printer {};
     while (true)
     {
         const auto [frame, payload] = pf.next();
-        const ConsolePrinter printer {};
         parseAndPrintFrame(frame, payload, printer);
         std::cout << "\n";
     }

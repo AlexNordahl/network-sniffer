@@ -11,10 +11,6 @@ Below is an example of captured packets:
 ![TCP Example](/examples/arp_broadcast.png)
 ![TCP Example](/examples/dns.png)
 
-## Features
-- Message timestamps
-- Colored logs
-
 ## Usage
 
 ### List available network interfaces
