@@ -4,8 +4,8 @@
 #include "printer/console_printer.h"
 #include "printer/file_printer.h"
 #include "helpers/parsers.h"
+#include "arguments_handler.h"
 
-std::optional<std::string> handleCommandLineArgs(int argc, char const* argv[]);
 void parseAndPrintFrame(const EtherFrame& frame, const u_char* payload, const Printer& pr);
 
 constexpr int snaplen_max = 65535;
@@ -14,14 +14,32 @@ constexpr int timeout_ms = 1000;
 int main(int argc, char const* argv[])
 {
     PcapFacade pf;
-    pf.autoSelectDevice();
+
+    auto device = selectDeviceArgument(argc, argv);
+    if (device.has_value())
+    {
+        pf.selectDevice(device.value());
+        std::cout << "Selected device: " << device.value() << "\n";
+    }
+    else
+    {
+        pf.autoSelectDevice();
+        std::cout << "Auto selected device: " << pf.listAllDevices().at(0) << "\n";
+    }
+
     pf.configure(snaplen_max, true, timeout_ms);
     pf.activate();
 
-    auto arguments = handleCommandLineArgs(argc, argv);
-    if (arguments.has_value())
+    if (listDevicesArgument(argc, argv))
     {
-        pf.setFilter(arguments.value().c_str());
+        for (const auto& dev : pf.listAllDevices())
+            std::cout << dev << "\n";
+    }
+
+    auto filter = filterArgument(argc, argv);
+    if (filter.has_value())
+    {
+        pf.setFilter(filter.value().c_str());
     }
 
     std::cout << "Listening...\n";
@@ -33,20 +51,6 @@ int main(int argc, char const* argv[])
         parseAndPrintFrame(frame, payload, printer);
         std::cout << "\n";
     }
-}
-
-std::optional<std::string> handleCommandLineArgs(int argc, char const *argv[])
-{
-    if (argc == 1)
-        return std::nullopt;
-
-    if (argc != 3)
-        throw std::invalid_argument("Usage: program -f \"protocol or protocol or...\"");
-
-    if (strcmp(argv[1], "-f") != 0 and strcmp(argv[1],"--filter") != 0)
-        throw std::invalid_argument("Usage: program -f \"protocol or protocol or...\"");
-
-    return {argv[2]};
 }
 
 void parseAndPrintFrame(const EtherFrame& frame, const u_char* payload, const Printer& pr)

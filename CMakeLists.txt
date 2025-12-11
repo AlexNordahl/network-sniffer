@@ -7,7 +7,8 @@ add_executable(main
     src/printer/console_printer.cpp
     src/printer/file_printer.cpp
     src/helpers/readable_protocols.cpp
-    src/helpers/parsers.cpp)
+    src/helpers/parsers.cpp
+    src/arguments_handler.cpp)
 
 target_link_libraries(main pcap)
 target_compile_features(main PRIVATE cxx_std_17)
