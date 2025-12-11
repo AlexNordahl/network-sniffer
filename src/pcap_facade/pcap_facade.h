@@ -1,7 +1,7 @@
 #ifndef PCAP_FACADE_H
 #define PCAP_FACADE_H
 
-#include "net_headers/all_net_headers.h"
+#include "../net_headers/all_net_headers.h"
 #include <vector>
 #include <array>
 #include <string>
@@ -21,7 +21,7 @@ public:
     struct ParsedUDP
     {
         UdpHeader header;
-        const u_char *data;
+        const u_char* data;
         const int dataLen;
     };
 
@@ -38,17 +38,16 @@ public:
     std::string getIPv4() const;
     std::string getMask() const;
     std::vector<std::string> listAllDevices() const;
-    int maskToCIDR(const std::string& mask) const;
     void setFilter(std::string text, const bool optimize = false);
 
-    std::pair<EtherFrame, const u_char *> next();
+    std::pair<EtherFrame, const u_char* > next();
 
 private:
     void extractIPv4Data();
 
-    pcap_if_t *allDevs;
-    pcap_if_t *selectedDev;
-    pcap_t *handle;
+    pcap_if_t* allDevs;
+    pcap_if_t* selectedDev;
+    pcap_t* handle;
     bpf_u_int32 netp;
     bpf_u_int32 maskp;
     struct bpf_program fp;

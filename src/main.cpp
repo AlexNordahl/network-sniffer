@@ -1,6 +1,6 @@
 #include <iostream>
 #include <optional>
-#include "pcap_facade.h"
+#include "pcap_facade/pcap_facade.h"
 #include "printer/console_printer.h"
 #include "printer/file_printer.h"
 #include "helpers/parsers.h"
@@ -8,14 +8,14 @@
 std::optional<std::string> handleCommandLineArgs(int argc, char const* argv[]);
 void parseAndPrintFrame(const EtherFrame& frame, const u_char* payload, const Printer& pr);
 
-constexpr int snaplex_max = 65535;
+constexpr int snaplen_max = 65535;
 constexpr int timeout_ms = 1000;
 
 int main(int argc, char const* argv[])
 {
     PcapFacade pf;
     pf.autoSelectDevice();
-    pf.configure(snaplex_max, true, timeout_ms);
+    pf.configure(snaplen_max, true, timeout_ms);
     pf.activate();
 
     auto arguments = handleCommandLineArgs(argc, argv);
@@ -23,6 +23,8 @@ int main(int argc, char const* argv[])
     {
         pf.setFilter(arguments.value().c_str());
     }
+
+    std::cout << "Listening...\n";
 
     while (true)
     {
@@ -41,7 +43,7 @@ std::optional<std::string> handleCommandLineArgs(int argc, char const *argv[])
     if (argc != 3)
         throw std::invalid_argument("Usage: program -f \"protocol or protocol or...\"");
 
-    if (strcmp(argv[1], "-f") != 0 or strcmp(argv[1],"--filter") != 0)
+    if (strcmp(argv[1], "-f") != 0 and strcmp(argv[1],"--filter") != 0)
         throw std::invalid_argument("Usage: program -f \"protocol or protocol or...\"");
 
     return {argv[2]};

@@ -88,31 +88,6 @@ std::string PcapFacade::getMask() const { return mask; }
     return result;
 }
 
-int PcapFacade::maskToCIDR(const std::string& mask) const
-{
-    std::string temp {mask};
-    temp.resize(15, '0');
-    temp += '.';
-    
-    int count = 0;
-    int ptr1 = 0;
-    int ptr2 = 4;
-    while (ptr2 < temp.length())
-    {
-        int octet = std::stoi(temp.substr(ptr1, ptr2));
-        ptr1 = ptr2;
-        ptr2 += 4;
-
-        while (octet) 
-        {
-            count += octet & 1;
-            octet >>= 1;
-        }
-    }
-
-    return count;
-}
-
 void PcapFacade::setFilter(std::string text, const bool optimize)
 {
     if (pcap_compile(handle, &fp, text.c_str(), optimize, maskp) < 0) 
@@ -135,15 +110,17 @@ std::pair<EtherFrame, const u_char*> PcapFacade::next()
     int res = pcap_next_ex(handle, &hdr, &bytes);
 
     if (res <= 0)
-        return {};
+        throw std::runtime_error("next(): pcap_next_ex error");
 
     struct ether_header* eptr;
     eptr = (struct ether_header*) bytes;
 
     EtherFrame frame;
-    frame.payloadLen = hdr->caplen - sizeof(ether_header);;
+    frame.payloadLen = static_cast<int>(hdr->caplen - sizeof(ether_header));
+
     memcpy(frame.source, eptr->ether_shost, 6);
     memcpy(frame.destination, eptr->ether_dhost, 6);
+    
     frame.type = ntohs(eptr->ether_type);
 
     const u_char* payload = bytes + sizeof(ether_header);

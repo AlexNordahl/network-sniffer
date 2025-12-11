@@ -3,7 +3,7 @@ project(packet-analyzer)
 
 add_executable(main
     src/main.cpp
-    src/pcap_facade.cpp
+    src/pcap_facade/pcap_facade.cpp
     src/printer/console_printer.cpp
     src/printer/file_printer.cpp
     src/helpers/readable_protocols.cpp
