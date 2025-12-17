@@ -1,5 +1,3 @@
-# gRPC Chat
-
 ## Motivation
 
 Simple traffic sniffing tool that displays information about incoming and outgoing packets on chosen interface. Tailored C++17 facade layer was created over C-based pcap library, providing a clean, modern, and type-safe API for packet capture. Tool displays information in nice readable format that's very approachable for beginners providing a learning oportunity.
