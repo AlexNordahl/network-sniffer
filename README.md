@@ -12,13 +12,19 @@ Below is an example of captured packets:
 ## Usage
 
 ### List available network interfaces
+```
 ./main --list
+```
 
 ### Start sniffing on a specific interface
+```
 ./main -i eth0
+```
 
 ### Apply a capture filter
+```
 ./main -i wlan0 -f "tcp or udp"
+```
 
 ## Future Improvements
 
